@@ -50,7 +50,7 @@ When you define the namespace,
 
 	namespace app/controller;
 
-the code will fine "app\\" in the autoloader, and mark that as the path to the class object you are defining. If you had a folder structure such as:
+the code will find "app\\" in the autoloader object defined above, and mark that as the path to the class object you are defining. If you had a folder structure such as:
 
 	slim-php-app
 		-controller
