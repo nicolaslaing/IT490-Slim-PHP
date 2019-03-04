@@ -35,4 +35,31 @@ Run this command in the application directory to run the test suite
 
 	php composer.phar test
 
+# Adding to the Composer
+
+Your PHP controller files will be using namespaces. These namespaces need to point to the correct file path. Here is a default configuration that must be added to composer.json:
+
+	"autoload": {
+	    "psr-4": {
+	        "app\\" : "",
+	        "App\\" : "src/"  
+	    }
+	}
+
+When you define the namespace,
+
+	namespace app/controller;
+
+the code will fine "app\\" in the autoloader, and mark that as the path to the class object you are defining. If you had a folder structure such as:
+
+	slim-php-app
+		-controller
+			--LoginController.php
+		-src
+			--routes.php
+		-etc...
+
+Then you would say the namespace is 'app/controller', not 'slim-php-app/controller'. If you changed the autoload to 'slim-php-app\\' THEN you would use the latter definition.
+
+
 That's it! Now go build something cool.
