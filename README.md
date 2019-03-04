@@ -1,3 +1,14 @@
+# Apache 2 Setup
+
+Edit the following files via the commands below. Make sure the Directory paths match the path to the root PHP folder. 
+
+    sudo vim /etc/apache2/apache2.conf
+    sudo vim /etc/apache2/sites-enabled/000-default.conf
+
+If you see '/var/www/' change to '/var/www/html/path/to/php/files', or where ever your root apache files are located. Mine are in '/var/www/html'. After saving the changes, restart apache2 service.
+
+	sudo service apache2 restart
+
 # Slim Framework 3 Skeleton Application
 
 Use this skeleton application to quickly setup and start working on a new Slim Framework 3 application. This application uses the latest Slim 3 with the PHP-View template renderer. It also uses the Monolog logger.
