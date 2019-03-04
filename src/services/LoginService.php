@@ -1,12 +1,11 @@
 <?php
-namespace app\controller;
+namespace app\src\services;
 use PDO;
 
-class LoginController {
+class LoginService {
 
 	public function __construct($app){
 		$this->app = $app;
-		$this->service = $app['LoginService'];
 	}
 
 	public function doLogin($request){

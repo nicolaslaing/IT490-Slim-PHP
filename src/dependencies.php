@@ -25,9 +25,9 @@ $container['logger'] = function ($c) {
 // }
 
 $container['LoginController'] = function ($c) {
-	return new \app\controller\LoginController($c);
+	return new app\controller\LoginController($c);
 };
 
-// $container['LoginService'] = function ($c) {
-// 	return new \app\service\LoginService($c);
-// };
+$container['LoginService'] = function ($c) {
+	return new app\src\services\LoginService($c);
+};
