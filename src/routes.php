@@ -7,6 +7,8 @@ use Slim\Http\Response;
 
 $app->get('/login', LoginController::class.':doLogin');
 
+$app->get('/api', SongController::class.':callAPI');
+
 // Catch-all route to serve a 404 Not Found page if none of the routes match
 // NOTE: make sure this route is defined last
 $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function($req, $res) {

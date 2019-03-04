@@ -31,3 +31,11 @@ $container['LoginController'] = function ($c) {
 $container['LoginService'] = function ($c) {
 	return new app\src\services\LoginService($c);
 };
+
+$container['SongController'] = function ($c) {
+	return new app\controller\SongController($c);
+};
+
+$container['SongService'] = function ($c) {
+	return new app\src\services\SongService($c);
+};
