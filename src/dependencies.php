@@ -17,3 +17,17 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+
+// $container['db'] = function ($c) {
+// 	$settings = $c->get('settings')['db'];
+
+// 	return $pdo;
+// }
+
+$container['LoginController'] = function ($c) {
+	return new \app\controller\LoginController($c);
+};
+
+// $container['LoginService'] = function ($c) {
+// 	return new \app\service\LoginService($c);
+// };
