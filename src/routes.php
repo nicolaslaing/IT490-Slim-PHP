@@ -5,7 +5,9 @@ use Slim\Http\Response;
 
 // Routes
 
+
 $app->post('/login', LoginController::class.':doLogin');
+$app->post('/register', LoginController::class.':register');
 
 $app->get('/api', SongController::class.':callAPI');
 
