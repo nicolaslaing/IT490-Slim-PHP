@@ -31,3 +31,6 @@ require __DIR__ . '/../src/routes.php';
 
 // Run app
 $app->run();
+
+// Close database connection
+$app->db = null;

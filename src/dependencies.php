@@ -18,11 +18,13 @@ $container['logger'] = function ($c) {
     return $logger;
 };
 
-// $container['db'] = function ($c) {
-// 	$settings = $c->get('settings')['db'];
-
-// 	return $pdo;
-// }
+$container['db'] = function ($c) {
+	$settings = $c->get('settings')['db'];
+    $pdo = new PDO("mysql:host=" . $settings['host'] . ";dbname=" . $settings['dbname'] . ";port=" . $settings['port'], $settings['user'], $settings['pass']);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+	return $pdo;
+};
 
 $container['LoginController'] = function ($c) {
 	return new app\controller\LoginController($c);
@@ -38,4 +40,12 @@ $container['SongController'] = function ($c) {
 
 $container['SongService'] = function ($c) {
 	return new app\src\services\SongService($c);
+};
+
+$container['UserController'] = function ($c) {
+    return new app\controller\UserController($c);
+};
+
+$container['UserService'] = function ($c) {
+    return new app\src\services\UserService($c);
 };

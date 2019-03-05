@@ -4,6 +4,12 @@ use PDO;
 
 class SongController {
 
+    public function __construct($app){
+        $this->app = $app;
+    }
+
+    // See this StackOverflow thread for why the API must be called from the backend, not the front end:
+    // https://stackoverflow.com/questions/46771352/no-access-control-allow-origin-for-public-api-request
     public function callAPI($request)
     {
 
@@ -43,4 +49,5 @@ class SongController {
 
         return $result;
     }
+    
 }

@@ -10,14 +10,23 @@ class LoginController {
 	}
 
 	public function doLogin($request){
+		$status = 200;
 		$username = json_decode($request->getBody(), true)['username'];
 		$password = json_decode($request->getBody(), true)['password'];
 
-		echo "Test";
-		// print_r($username);
-		// print_r($password);
+		$query = "SELECT id, fName, lName, username, email, created FROM User WHERE username=:username AND password=:password";
+		
+		$sth = $this->app->db->prepare($query);
+		$sth->bindParam("username", $username);
+		$sth->bindParam("password", $password);
+		$sth->execute();
+		$users = $sth->fetchAll();
 
-		// return $this->app->response->withJson($username, 200);
+		if(empty($users)){
+			$status = 400;
+		}
+
+		return $this->app->response->withJson($users, $status);
 	}
 
 }

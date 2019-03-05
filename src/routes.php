@@ -5,9 +5,11 @@ use Slim\Http\Response;
 
 // Routes
 
-$app->get('/login', LoginController::class.':doLogin');
+$app->post('/login', LoginController::class.':doLogin');
 
 $app->get('/api', SongController::class.':callAPI');
+
+$app->post('/log', UserController::class.':auditLog');
 
 // Catch-all route to serve a 404 Not Found page if none of the routes match
 // NOTE: make sure this route is defined last
