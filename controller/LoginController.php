@@ -21,13 +21,21 @@ class LoginController {
 		$sth->bindParam("username", $username);
 		$sth->bindParam("password", $password);
 		$sth->execute();
-		$users = $sth->fetchAll();
+		$user = $sth->fetchObject();
 
-		if(empty($users)){
+		if(empty($user)){
 			$status = 400;
 		}
 
-		return $this->app->response->withJson($users, $status);
+		$userid = $user->id;
+
+		$query = "INSERT INTO User_log (`User_id`, `Action`, `timestamp`) VALUES (:userid, 'Logged in', NOW())";
+
+		$sth = $this->app->db->prepare($query);
+		$sth->bindParam("userid", $userid);
+		$sth->execute();
+
+		return $this->app->response->withJson($user, $status);
 
 	}
 
