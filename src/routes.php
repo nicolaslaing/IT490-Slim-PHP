@@ -8,6 +8,9 @@ use Slim\Http\Response;
 
 $app->post('/login', LoginController::class.':doLogin');
 $app->post('/register', LoginController::class.':register');
+$app->post('/forgotusername', LoginController::class.':forgotUsername');
+$app->post('/forgotpassword', LoginController::class.':forgotPassword');
+
 
 $app->get('/api', SongController::class.':callAPI');
 
