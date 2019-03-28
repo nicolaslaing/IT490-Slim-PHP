@@ -6,44 +6,9 @@ class SongController {
 
     public function __construct($app){
         $this->app = $app;
+        $this->rabbitmq = $app['RabbitMQService'];
     }
-
-    public function consume($queue){
-        // GET
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://0.0.0.0:5000/consume/' . $queue);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        $data = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        return ($httpcode>=200 && $httpcode<300) ? $data : false;
-    }
-
-    public function publish($queue, $data){
-        // POST
-        $url = 'http://0.0.0.0:5000/publish/' . $queue;
-
-        // use key 'http' even if you send the request to https://...
-        $options = array(
-            'http' => array(
-                'method'  => 'POST',
-                'content' => json_encode( $data ),
-                'header'=>  "Content-Type: application/json\r\n" .
-                            "Accept: application/json\r\n"
-            )
-        );
-        $context  = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-
-        /* Handle error */
-        if ($result === FALSE) { 
-            print_r("ERROR Publish");
-        }
-    }
-
+    
     // See this StackOverflow thread for why the API must be called from the backend, not the front end:
     // https://stackoverflow.com/questions/46771352/no-access-control-allow-origin-for-public-api-request
     public function callAPI($request)

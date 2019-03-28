@@ -49,3 +49,7 @@ $container['UserController'] = function ($c) {
 $container['UserService'] = function ($c) {
     return new app\src\services\UserService($c);
 };
+
+$container['RabbitMQService'] = function ($c) {
+    return new app\src\services\RabbitMQService($c);
+};
