@@ -10,6 +10,7 @@ class RabbitMQService {
 
 	public function consume($queue, $publishStatus){
 		// GET
+		// Confirm the queue has successfully been published, otherwise flag 400 HTTP response
 		if($publishStatus == 200){
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, 'http://0.0.0.0:5000/consume/' . $queue);
@@ -22,7 +23,7 @@ class RabbitMQService {
 			curl_close($ch);
 			return ($httpcode>=200 && $httpcode<300) ? $data : $httpcode;
 		} else {
-			return 400;
+			return $publishStatus;
 		}
 	}
 
@@ -42,7 +43,7 @@ class RabbitMQService {
 		$context  = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
 
-		/* Handle error */
+		// Flag the publish failed
 		if ($result === FALSE) { 
 			$status = 400;
 		}

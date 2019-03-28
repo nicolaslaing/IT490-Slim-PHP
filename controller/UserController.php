@@ -13,7 +13,7 @@ class UserController {
 
 		$userid = json_decode($request->getBody(), true)['userid'];
 
-		$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Logged in', NOW())";
+		$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Test Audit', NOW())";
 
 		$sth = $this->app->db->prepare($query);
 		$sth->bindParam("userid", $userid);
