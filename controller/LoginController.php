@@ -56,25 +56,37 @@ class LoginController {
 
 		$data2 = $this->consume("api");
 
-		$query = "SELECT id, fName, lName, username, email, created FROM User WHERE username=:username AND password=:password";
+		$query = "SELECT id, fName, lName, username, password, email, created FROM User WHERE username=:username";
 
 		$sth = $this->app->db->prepare($query);
 		$sth->bindParam("username", $username);
-		$sth->bindParam("password", $password);
+		// $sth->bindParam("password", $password);
 		$sth->execute();
 		$user = $sth->fetchObject();
 
-		if(empty($user)){
-			$status = 400;
-		}
-
 		$userid = $user->id;
 
-		$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Logged in', NOW())";
+		// invalid username
+		if(empty($user)){
+			$status = 400;
+		
+		// bad password
+		} if($user->password != $password){
+			$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Unsuccessful login', NOW())";
 
-		$sth = $this->app->db->prepare($query);
-		$sth->bindParam("userid", $userid);
-		$sth->execute();
+			$sth = $this->app->db->prepare($query);
+			$sth->bindParam("userid", $userid);
+			$sth->execute();
+			$status = 400;
+		
+		// successful login
+		} else {
+			$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Logged in', NOW())";
+
+			$sth = $this->app->db->prepare($query);
+			$sth->bindParam("userid", $userid);
+			$sth->execute();
+		}
 
 		return $this->app->response->withJson($user, $status);
 
