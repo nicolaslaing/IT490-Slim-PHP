@@ -10,6 +10,7 @@ $app->post('/login', LoginController::class.':doLogin');
 $app->post('/register', LoginController::class.':register');
 $app->post('/forgotusername', LoginController::class.':forgotUsername');
 $app->post('/forgotpassword', LoginController::class.':forgotPassword');
+$app->post('/resetpassword', LoginController::class.':resetPassword');
 
 
 $app->get('/api', SongController::class.':callAPI');

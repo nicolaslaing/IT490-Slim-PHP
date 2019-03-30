@@ -7,10 +7,11 @@ class LoginController {
 	public function __construct($app){
 		$this->app = $app;
 		$this->service = $app['LoginService'];
+		$this->userService = $app['UserService'];
 		$this->rabbitmq = $app['RabbitMQService'];
 	}
 
-	public function doLogin($request){
+	public function doLogin($request, $response, $args){
 
 		$status = 200;
 		$username = json_decode($request->getBody(), true)['username'];
@@ -20,7 +21,7 @@ class LoginController {
 		$publishStatus = $this->rabbitmq->publish("api", $data);
 
 		$data2 = $this->rabbitmq->consume("api", $publishStatus);
-		
+
 		$query = "SELECT id, fName, lName, username, password, email, created FROM User WHERE username=:username";
 
 		$sth = $this->app->db->prepare($query);
@@ -29,7 +30,7 @@ class LoginController {
 		$sth->execute();
 		$user = $sth->fetchObject();
 
-		$userid = $user->id;
+		$userId = $user->id;
 
 		// invalid username
 		if(empty($user)){
@@ -37,27 +38,22 @@ class LoginController {
 		
 		// bad password
 		} if(!password_verify($password, $user->password)){
-			$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Unsuccessful login', NOW())";
-
-			$sth = $this->app->db->prepare($query);
-			$sth->bindParam("userid", $userid);
-			$sth->execute();
+			$this->userService->auditLog($userId, "Unsuccessful Login");
 			$status = 400;
 		
 		// successful login
 		} else {
-			$query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, 'Logged in', NOW())";
-
-			$sth = $this->app->db->prepare($query);
-			$sth->bindParam("userid", $userid);
-			$sth->execute();
+			$this->userService->auditLog($userId, "Successful Login");
 		}
-		unset($user->password);
+
+		unset($user->password); // remove from object since the response can be viewed in plain text
+
+		header("Content-Type: application/json");
 		return $this->app->response->withJson($user, $status);
 
 	}
 
-	public function register($request){
+	public function register($request, $response, $args){
 
 		$status = 200;
 
@@ -98,15 +94,74 @@ class LoginController {
 		$sth->bindParam("password", $password);
 		$sth->execute();
 
-		return $status;
+		header("Content-Type: application/json");
+		return $this->app->response->withJson($status);
 
 	}
 
-	public function forgotUsername($request){
+	public function forgotUsername($request, $response, $args){
+
+		$status = 200;
+		$email = json_decode($request->getBody(), true)['email'];
+
+		$query = "SELECT username FROM User WHERE email=:email";
+
+		$sth = $this->app->db->prepare($query);
+		$sth->bindParam("email", $email);
+		$sth->execute();
+		$username = $sth->fetch();
+
+		if(empty($username)){
+			$status = 400;
+			$username = "Username does not exist.";
+			return $status;
+		}
+
+		header("Content-Type: application/json");
+		return $this->app->response->withJson($username, $status);
 
 	}
 
-	public function forgotPassword($request){
+	public function forgotPassword($request, $response, $args){
+
+		$status = 200;
+		$username = json_decode($request->getBody(), true)['username'];
+
+		$query = "SELECT id, username FROM User WHERE username=:username";
+
+		$sth = $this->app->db->prepare($query);
+		$sth->bindParam("username", $username);
+		$sth->execute();
+		$usernameObj = $sth->fetchAll();
+
+		if(empty($usernameObj)) {
+			$status = 400;
+			return $this->app->response->withJson($status);
+		}
+
+		header("Content-Type: application/json");
+		return $this->app->response->withJson($usernameObj, $status);
+
+	}
+
+	public function resetPassword($request, $response, $args){
+
+		$status = 200;
+		$userId = json_decode($request->getBody(), true)['id'];
+		$username = json_decode($request->getBody(), true)['username'];
+		$password = password_hash(json_decode($request->getBody(), true)['password'], PASSWORD_BCRYPT);
+
+		$query = "UPDATE User SET password=:password WHERE username=:username";
+
+		$sth = $this->app->db->prepare($query);
+		$sth->bindParam("username", $username);
+		$sth->bindParam("password", $password);
+		$sth->execute();
+
+		$this->userService->auditLog($userId, "Password Reset");
+
+		header("Content-Type: application/json");
+		return $this->app->response->withJson($status);
 
 	}
 

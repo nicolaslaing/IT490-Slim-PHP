@@ -8,9 +8,17 @@ class UserService {
         $this->app = $app;
     }
     
-    // public function callAPI($request)
-    // {
+    public function auditLog($userId, $actionId){
 
-    // }
+        $query = "INSERT INTO User_log (`User_id`, `Action_id`, `timestamp`) VALUES (:userid, :actionid, NOW())";
+
+        $sth = $this->app->db->prepare($query);
+        $sth->bindParam("userid", $userId);
+        $sth->bindParam("actionid", $actionId);
+        $sth->execute();
+
+        return 200;
+
+    }
     
 }
