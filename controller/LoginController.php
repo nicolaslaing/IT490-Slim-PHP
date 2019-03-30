@@ -131,7 +131,7 @@ class LoginController {
 		$sth = $this->app->db->prepare($query);
 		$sth->bindParam("username", $username);
 		$sth->execute();
-		$usernameObj = $sth->fetchAll();
+		$usernameObj = $sth->fetch();
 
 		if(empty($usernameObj)) {
 			$status = 400;
