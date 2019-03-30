@@ -113,8 +113,7 @@ class LoginController {
 
 		if(empty($username)){
 			$status = 400;
-			$username = "Username does not exist.";
-			return $status;
+			$username = "Email does not exist";
 		}
 
 		header("Content-Type: application/json");
@@ -136,7 +135,7 @@ class LoginController {
 
 		if(empty($usernameObj)) {
 			$status = 400;
-			return $this->app->response->withJson($status);
+			$usernameObj = "Username does not exist";
 		}
 
 		header("Content-Type: application/json");
