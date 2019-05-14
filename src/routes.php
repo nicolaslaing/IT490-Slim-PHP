@@ -13,7 +13,8 @@ return function (App $app) {
 
 
     $app->get('/api', SongController::class.':callAPI');
-
+    $app->get('/artist/{entityId}', SongController::class.':artist');
+    $app->post('/search', SongController::class.':search');
     $app->post('/log', UserController::class.':auditLog');
 
     // Catch-all route to serve a 404 Not Found page if none of the routes match

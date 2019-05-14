@@ -8,7 +8,36 @@ class SongController {
         $this->app = $app;
         $this->rabbitmq = $app['RabbitMQService'];
     }
-    
+    public function search($request){
+        $status = 200;
+		$entityType = json_decode($request->getBody(), true)['entityType'];
+        $params = json_decode($request->getBody(), true)['params'];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://secondhandsongs.com/search/'.$entityType.'?format=json&'.$params);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $data = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ($httpcode>=200 && $httpcode<300) ? $data : $httpcode;
+    }
+    public function artist($request, $response, $args){
+        $status = 200;
+        $entityId = $args['entityId'];
+        
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://secondhandsongs.com/artist/'.$entityId.'?format=json');
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        $data = curl_exec($ch);
+        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ($httpcode>=200 && $httpcode<300) ? $data : $httpcode;
+    }
     // See this StackOverflow thread for why the API must be called from the backend, not the front end:
     // https://stackoverflow.com/questions/46771352/no-access-control-allow-origin-for-public-api-request
     public function callAPI($request)
