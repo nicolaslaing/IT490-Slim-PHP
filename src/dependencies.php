@@ -23,9 +23,21 @@ return function (App $app) {
 
     $container['db'] = function ($c) {
         $settings = $c->get('settings')['db'];
-        $pdo = new PDO("mysql:host=" . $settings['host'] . ";dbname=" . $settings['dbname'] . ";port=" . $settings['port'], $settings['user'], $settings['pass']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        $notConnected = true;
+        $addressIndex = 0;
+        $address = array('192.168.0.14','192.168.0.15','192.168.0.16');
+
+        while($notConnected){
+            try {
+                $pdo = new PDO("mysql:host=" . $address[$addressIndex] . ";dbname=" . $settings['dbname'] . ";port=" . $settings['port'], $settings['user'], $settings['pass']);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                $notConnected = false;
+            } catch(PDOException $e) {
+                $addressIndex++;
+            }
+        }
+
         return $pdo;
     };
 
